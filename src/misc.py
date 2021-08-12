@@ -1,13 +1,7 @@
 from typing import *
 
 def get_user_choice() -> int:
-    #################################################
-    # Returns the choice of the user.               #
-    #                                               #
-    # user_input: int                               #
-    #   The user's choice.                          #
-    #                                               #
-    #################################################
+    """Returns the choice of the user"""
 
     print("What are you going to do?")
     print("(1) Register");
@@ -22,17 +16,9 @@ def get_user_choice() -> int:
     return user_input;
 
 def get_user_pwd() -> Tuple[str, str]:
-    #################################################
-    # Prompts the user for the username and pwd.    #
-    #                                               #
-    # username: str                                 #
-    #   The username                                #
-    # pwd: str                                      #
-    #   The password                                #
-    #                                               #
-    #################################################
+    """Gets the username and password of the user"""
 
-    username = input("Enter username: ");
-    pwd      = input("Enter password: ");
+    username = input("Enter username: ").strip();
+    pwd      = input("Enter password: ").strip();
 
     return (username, pwd);
