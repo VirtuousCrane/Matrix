@@ -1,6 +1,6 @@
-import src.connection as connection
-import src.misc as misc
-import sys
+import src.connection as connection;
+import src.misc as misc;
+import sys;
 
 def main():
     user_choice = misc.get_user_choice();
