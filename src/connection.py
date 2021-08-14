@@ -1,5 +1,6 @@
 import requests;
 import src.misc as misc;
+import src.error as error;
 from typing import *;
 
 def login(username: str, password: str) -> dict[str, str]:
@@ -23,7 +24,7 @@ def login(username: str, password: str) -> dict[str, str]:
     );
 
     res = res.json();
-    misc.raise_matrix_error(res);
+    error.raise_connection_error(res);
 
     return res;
 
@@ -53,7 +54,7 @@ def register_auth(username: str, password: str, session: str) -> dict[str, str]:
     );
 
     res = res.json();
-    misc.raise_matrix_error(res);
+    error.raise_connection_error(res);
 
     return res;
 
@@ -76,8 +77,29 @@ def register(username: str, password: str) -> dict[str, str]:
     );
 
     res = res.json();
-    misc.raise_matrix_error(res);
+    error.raise_connection_error(res);
     res = register_auth (username, password, res["session"]);
 
     return res;
 
+def create_room(access_token: str) -> dict[str, str]:
+    """Creates a new Matrix room
+
+    Parameters
+    ----------
+    access_token: str
+        The access token of the user
+    """
+
+    res = requests.post (
+        "http://localhost:8008/_matrix/client/r0/createRoom" +
+        "?access_token=" +
+        access_token,
+        json = {
+        },
+    );
+
+    res = res.json();
+    error.raise_connection_error(res);
+
+    return res;
