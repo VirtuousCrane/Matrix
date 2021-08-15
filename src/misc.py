@@ -10,11 +10,12 @@ def get_user_choice() -> int:
     print ("(1) Register   ");
     print ("(2) Login      ");
     print ("(3) Create Room");
-    print ("(4) Quit       ");
+    print ("(4) Get Room State");
+    print ("(5) Quit       ");
 
     user_input = int(input("Your Choice: "));
 
-    if (user_input > 4 or user_input < 1):
+    if (user_input > 5 or user_input < 1):
         raise InputError("Wrong Input");
 
     return user_input;
@@ -37,10 +38,11 @@ def execute_user_choice(user_choice: int) -> dict[str, str]:
         (1) Register
         (2) Login
         (3) Create Room
-        (4) Exit
+        (4) Get Room State
+        (5) Exit
     """
 
-    if (user_choice == 4):
+    if (user_choice == 5):
         sys.exit();
 
     username, pwd = get_user_pwd();
@@ -49,7 +51,9 @@ def execute_user_choice(user_choice: int) -> dict[str, str]:
         res = connection.register (username, pwd);
     else:
         res = connection.login (username, pwd);
-        if (user_choice == 3):
+        if (user_choice == 3 or user_choice == 4):
             res = connection.create_room (res["access_token"]);
+            if (user_choice == 4):
+                res = connection.get_room_state(res["room_id"]);
 
     return res;

@@ -103,3 +103,18 @@ def create_room(access_token: str) -> dict[str, str]:
     error.raise_connection_error(res);
 
     return res;
+
+def get_room_state(room_id: str) -> dict[str, str]:
+    """Gets the room state
+
+    Parameters
+    ----------
+    room_id: str
+        The room's id
+    """
+
+    url = f"http://localhost:8008/_matrix/client/r0/rooms/{room_id}/state";
+    res = requests.get (url);
+    res = res.json();
+
+    return res;
