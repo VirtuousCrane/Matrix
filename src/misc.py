@@ -11,11 +11,12 @@ def get_user_choice() -> int:
     print ("(2) Login      ");
     print ("(3) Create Room");
     print ("(4) Get Room State");
-    print ("(5) Quit       ");
+    print ("(5) Send state event");
+    print ("(6) Quit       ");
 
     user_input = int(input("Your Choice: "));
 
-    if (user_input > 5 or user_input < 1):
+    if (user_input > 6 or user_input < 1):
         raise InputError("Wrong Input");
 
     return user_input;
@@ -42,7 +43,7 @@ def execute_user_choice(user_choice: int) -> dict[str, str]:
         (5) Exit
     """
 
-    if (user_choice == 5):
+    if (user_choice == 6):
         sys.exit();
 
     username, pwd = get_user_pwd();
@@ -51,9 +52,24 @@ def execute_user_choice(user_choice: int) -> dict[str, str]:
         res = connection.register (username, pwd);
     else:
         res = connection.login (username, pwd);
-        if (user_choice == 3 or user_choice == 4):
-            res = connection.create_room (res["access_token"]);
-            if (user_choice == 4):
-                res = connection.get_room_state(res["room_id"]);
+        access_token = res["access_token"];
+
+        if (user_choice == 3):
+            res = connection.create_room (access_token);
+
+        elif (user_choice == 4):
+            room_id = input ("Please enter room id: ");
+            res = connection.get_room_state (room_id, access_token);
+
+        elif (user_choice == 5):
+            room_id = input ("Please enter room id: ");
+            event_type = input ("Please enter event type: ");
+            state_key = input ("Please enter state key: ");
+            res = connection.send_room_event (
+                room_id,
+                event_type,
+                state_key,
+                access_token
+            );
 
     return res;
