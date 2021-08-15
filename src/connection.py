@@ -28,6 +28,22 @@ def login(username: str, password: str) -> dict[str, str]:
 
     return res;
 
+def logout_all (access_token: str):
+    """Invalidates all access tokens for a user
+
+    Parameters
+    ----------
+    access_token: str
+        The access token
+    """
+
+    url = f"http://localhost:8008/_matrix/client/r0/logout/all?access_token={access_token}";
+    res = requests.post (url);
+    res = res.json();
+    error.raise_connection_error (res);
+
+    return res;
+
 def register_auth(username: str, password: str, session: str) -> dict[str, str]:
     """Authenticates the registration against the server
 
@@ -243,6 +259,45 @@ def join_room(room_id: str, access_token: str) -> dict[str, str]:
 
     url = f"http://localhost:8008/_matrix/client/r0/rooms/{room_id}/join?access_token={access_token}";
     res = requests.post (url);
+    res = res.json();
+    error.raise_connection_error (res);
+
+    return res;
+
+def get_members(room_id: str, access_token: str) -> dict[str, str]:
+    """Lists the members of a room
+
+    Parameters
+    ----------
+    room_id: str
+        The target room
+    access_token: str
+        The access token
+    """
+
+    url = f"http://localhost:8008/_matrix/client/r0/rooms/{room_id}/members?access_token={access_token}";
+    res = requests.get (url);
+    res = res.json();
+    error.raise_connection_error (res);
+
+    return res;
+
+def get_messages(room_id: str, access_token: str) -> dict[str, str]:
+    """Fetch messages from the server
+
+    Parameters
+    ----------
+    room_id: str
+        The id of the room we want to fetch the messages from
+    access_token: str
+        The access token
+    """
+
+    sync_data = sync (access_token);
+    prev_batch = sync_data["rooms"]["join"][room_id]["timeline"]["prev_batch"];
+
+    url = f"http://localhost:8008/_matrix/client/r0/rooms/{room_id}/messages?from={prev_batch}&dir=b&access_token={access_token}";
+    res = requests.get (url);
     res = res.json();
     error.raise_connection_error (res);
 

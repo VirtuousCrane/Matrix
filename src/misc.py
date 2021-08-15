@@ -17,11 +17,15 @@ def get_user_choice() -> int:
     print ("(7) Send an invite  ");
     print ("(8) Sync data       ");
     print ("(9) Join a room     ");
+    print ("(10) Get members    ");
+    print ("(11) Get Messages   ");
+    print ("(12) Print Messages");
+    print ("(13) Logout         ");
     print ("(0) Quit            ");
 
     user_input = int(input("Your Choice: "));
 
-    if (user_input > 9 or user_input < 0):
+    if (user_input > 13 or user_input < 0):
         raise InputError("Wrong Input");
 
     return user_input;
@@ -50,6 +54,10 @@ def execute_user_choice(user_choice: int) -> dict[str, str]:
         (7) Send an invite
         (8) Sync data
         (9) Join a room
+        (10) Get members
+        (11) Get messages
+        (12) Print Messages
+        (13) Logout
         (0) Exit
     """
 
@@ -95,8 +103,8 @@ def execute_user_choice(user_choice: int) -> dict[str, str]:
             );
 
         elif (user_choice == 7):
-            room_id = input("Please enter room id: ");
-            user_id = input("Please enter user id: ");
+            room_id = input ("Please enter room id: ");
+            user_id = input ("Please enter user id: ");
             res = connection.invite (
                 room_id,
                 user_id,
@@ -107,7 +115,31 @@ def execute_user_choice(user_choice: int) -> dict[str, str]:
             res = connection.sync (access_token);
 
         elif (user_choice == 9):
-            room_id = input("Please enter room id: ");
+            room_id = input ("Please enter room id: ");
             res = connection.join_room (room_id, access_token);
+
+        elif (user_choice == 10):
+            room_id = input ("Please enter room id: ");
+            res = connection.get_members (room_id, access_token);
+
+        elif (user_choice == 11 or user_choice == 12):
+            room_id = input ("Please enter room id: ");
+            res = connection.get_messages (room_id, access_token);
+            if (user_choice == 12):
+                messages = [(event["sender"], event["content"]["body"]) for event in res["chunk"] if "body" in event["content"]];
+                messages.reverse();
+
+                print ();
+                print ("#" * 50);
+                for sender, message in messages:
+                    print (f"Sender: {sender}");
+                    print (f"Message: {message}\n");
+                print ("#" * 50);
+                print ();
+
+                res = {}
+
+        elif (user_choice == 13):
+            res = connection.logout_all (access_token);
 
     return res;
