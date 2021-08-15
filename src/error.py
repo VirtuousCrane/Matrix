@@ -20,6 +20,6 @@ def raise_connection_error(result_dict: dict[str, str]) -> bool:
     """
 
     if ("errcode" in result_dict):
-        raise ConnectionError (f"Error: {result_dict['errcode']}");
+        raise ConnectionError (f"Error: {result_dict['errcode']}\n Msg: {result_dict['error']}");
 
     return False;

@@ -1,5 +1,6 @@
 from src.error import ConnectionError, InputError;
 from typing import *;
+from random import randint;
 import src.connection as connection;
 import sys;
 
@@ -7,16 +8,20 @@ def get_user_choice() -> int:
     """Returns the choice of the user"""
 
     print ("What are you going to do?")
-    print ("(1) Register   ");
-    print ("(2) Login      ");
-    print ("(3) Create Room");
-    print ("(4) Get Room State");
+    print ("(1) Register        ");
+    print ("(2) Login           ");
+    print ("(3) Create Room     ");
+    print ("(4) Get Room State  ");
     print ("(5) Send state event");
-    print ("(6) Quit       ");
+    print ("(6) Send a message  ");
+    print ("(7) Send an invite  ");
+    print ("(8) Sync data       ");
+    print ("(9) Join a room     ");
+    print ("(0) Quit            ");
 
     user_input = int(input("Your Choice: "));
 
-    if (user_input > 6 or user_input < 1):
+    if (user_input > 9 or user_input < 0):
         raise InputError("Wrong Input");
 
     return user_input;
@@ -40,10 +45,15 @@ def execute_user_choice(user_choice: int) -> dict[str, str]:
         (2) Login
         (3) Create Room
         (4) Get Room State
-        (5) Exit
+        (5) Send State Event
+        (6) Send a message
+        (7) Send an invite
+        (8) Sync data
+        (9) Join a room
+        (0) Exit
     """
 
-    if (user_choice == 6):
+    if (user_choice == 0):
         sys.exit();
 
     username, pwd = get_user_pwd();
@@ -71,5 +81,33 @@ def execute_user_choice(user_choice: int) -> dict[str, str]:
                 state_key,
                 access_token
             );
+
+        elif (user_choice == 6):
+            room_id = input("Please enter room id: ");
+            message = input("Please enter message: ");
+            txn_id = str(randint(1, 1000000));
+            res = connection.send_message (
+                message,
+                room_id,
+                "m.room.message",
+                txn_id,
+                access_token
+            );
+
+        elif (user_choice == 7):
+            room_id = input("Please enter room id: ");
+            user_id = input("Please enter user id: ");
+            res = connection.invite (
+                room_id,
+                user_id,
+                access_token,
+            );
+
+        elif (user_choice == 8):
+            res = connection.sync (access_token);
+
+        elif (user_choice == 9):
+            room_id = input("Please enter room id: ");
+            res = connection.join_room (room_id, access_token);
 
     return res;

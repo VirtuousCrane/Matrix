@@ -148,3 +148,102 @@ def send_room_event(
     error.raise_connection_error (res);
 
     return res;
+
+def send_message(
+    message: str,
+    room_id: str,
+    event_type: str,
+    txn_id: str,
+    access_token: str
+) -> dict[str, str]:
+    """Sends a message
+
+    Parameters
+    ----------
+    message: str
+        The message we want to send
+    room_id: str
+        The room's id
+    event_type: str
+        The type of the event
+    txn_id: str
+        The transaction id
+    access_token: str
+        The access token we have previously acquired from logging in
+    """
+
+    url = f"http://localhost:8008/_matrix/client/r0/rooms/{room_id}/send/{event_type}/{txn_id}?access_token={access_token}";
+    res = requests.put (
+        url,
+        json = {
+            "msgtype": "m.text",
+            "body": message,
+        }
+    );
+    res = res.json();
+    error.raise_connection_error (res);
+
+    return res;
+
+def invite(
+    room_id: str,
+    user_id: str,
+    access_token: str
+) -> dict[str, str]:
+    """Invites someone into a room
+
+    Parameters
+    ----------
+    room_id: str
+        The room's id
+    user_id: str
+        The id of the user we want to invite
+    access_token: str
+        The access token we have previously acquired from logging in
+    """
+
+    url = f"http://localhost:8008/_matrix/client/r0/rooms/{room_id}/invite?access_token={access_token}";
+    res = requests.post (
+        url,
+        json = {
+            "user_id": user_id
+        }
+    );
+    res = res.json();
+    error.raise_connection_error (res);
+
+    return res;
+
+def sync(access_token: str) -> dict[str, str]:
+    """Syncs a user's data
+
+    Parameters
+    ----------
+    access_token: str
+        The access token we have previously acquired from logging in
+    """
+
+    url = f"http://localhost:8008/_matrix/client/r0/sync?access_token={access_token}";
+    res = requests.get (url);
+    res = res.json();
+    error.raise_connection_error (res);
+
+    return res;
+
+def join_room(room_id: str, access_token: str) -> dict[str, str]:
+    """Joins a room
+
+    Parameters
+    ----------
+    room_id: str
+        The id of the room that we are going to join
+    access_token: str
+        The access token we have previously acquired from logging in
+    """
+
+    url = f"http://localhost:8008/_matrix/client/r0/rooms/{room_id}/join?access_token={access_token}";
+    res = requests.post (url);
+    res = res.json();
+    error.raise_connection_error (res);
+
+    return res;
